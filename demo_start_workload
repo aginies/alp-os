@@ -51,6 +51,7 @@ usage() {
     cat <<EOF
 
 	This is a DEMO script to TEST some ALP OS workload
+	This script doesn't stop your container (podman stop CONTAINER)
 
     	First arg should be the workload to start
 kvm	
@@ -64,7 +65,7 @@ cockpit
 	https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 
 grafana
-	Grafana Web interface
+	Grafana Web Interface
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
 EOF
