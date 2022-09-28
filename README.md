@@ -14,3 +14,6 @@ This script doesnt remove the container or stop the workload.
 * grafana: Grafana Web interface
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
+
+ALP OS workloads:
+https://build.opensuse.org/project/show/SUSE:ALP:Workloads
