@@ -5,10 +5,20 @@
 PODMAN=/usr/bin/podman
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 
+press_enter() {
+    cat <<EOF
+ Press ENTER to continue or Crtl+c to Abort
+ -------------------------------------------
+EOF
+read
+}
+
 kvm_workload() {
     echo "KVM container workload"
     IMAGE=${WORKLOADPATH}/kvm:latest
     ${PODMAN} container runlabel install ${IMAGE}
+    kvm-container-manage.sh info
+    press_enter
     kvm-container-manage.sh create
     kvm-container-manage.sh start
     virt-install.sh
@@ -17,6 +27,7 @@ kvm_workload() {
 
 yast_ncurses_workload() {
     echo "Yast ncurses"
+    press_enter
     IMAGE=${WORKLOADPATH}/yast-mgmt-ncurses:latest
     ${PODMAN} container runlabel run ${IMAGE}
 }
@@ -24,6 +35,7 @@ yast_ncurses_workload() {
 
 cockpit_workload() {
     echo "Cockpit Web Management"
+    press_enter
     IMAGE=${WORKLOADPATH}/cockpit-ws:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
@@ -36,6 +48,7 @@ EOF
 
 grafana_workload() {
     echo "Grafana Web interface"
+    press_enter
     IMAGE=${WORKLOADPATH}/grafana:latest
     ${PODMAN} container runlabel install ${IMAGE}
     grafana-container-manage.sh create
@@ -55,8 +68,13 @@ check_container() {
 	    echo "No Previous ${CONTAINER} created"
 	else
 	    cat <<EOF
-	${CONTAINER} already created, to start it:
+	${CONTAINER} already created!
+
+        To start the container:
 	podman start ${CONTAINER}
+
+	To remove the container:
+	podman rm ${CONTAINER}
 EOF
 	    exit 1
 	fi
