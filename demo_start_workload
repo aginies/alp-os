@@ -26,7 +26,11 @@ cockpit_workload() {
     IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/cockpit-ws:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
-    echo "Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:9090"
+    cat <<EOF
+
+	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
+
+EOF
 }
 
 grafana_workload() {
@@ -36,13 +40,16 @@ grafana_workload() {
     grafana-container-manage.sh create
     grafana-container-manage.sh start
     cat <<EOF
+
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000"
 	login with admin / admin
+
 EOF
 }
 
 usage() {
     cat <<EOF
+
 	This is a DEMO script to TEST some ALP OS workload
 
     	First arg should be the workload to start
