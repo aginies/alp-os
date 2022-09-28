@@ -3,10 +3,11 @@
 # quick script to easily start workload on ALP OS
 
 PODMAN=/usr/bin/podman
+WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/
 
 kvm_workload() {
     echo "KVM container workload"
-    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/kvm:latest
+    IMAGE=${WORKLOADPATH}/kvm:latest
     ${PODMAN} container runlabel install ${IMAGE}
     kvm-container-manage.sh create
     kvm-container-manage.sh start
@@ -16,14 +17,14 @@ kvm_workload() {
 
 yast_ncurses_workload() {
     echo "Yast ncurses"
-    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/yast-mgmt-ncurses:latest
+    IMAGE=${WORKLOADPATH}/yast-mgmt-ncurses:latest
     ${PODMAN} container runlabel run ${IMAGE}
 }
 
 
 cockpit_workload() {
     echo "Cockpit Web Management"
-    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/cockpit-ws:latest
+    IMAGE=${WORKLOADPATH}/cockpit-ws:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
     cat <<EOF
@@ -35,7 +36,7 @@ EOF
 
 grafana_workload() {
     echo "Grafana Web interface"
-    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest
+    IMAGE=${WORKLOADPATH}/grafana:latest
     ${PODMAN} container runlabel install ${IMAGE}
     grafana-container-manage.sh create
     grafana-container-manage.sh start
