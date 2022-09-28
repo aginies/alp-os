@@ -1,0 +1,88 @@
+#!/bin/sh
+# aginies@suse.com
+# quick script to easily start workload on ALP OS
+
+PODMAN=/usr/bin/podman
+
+kvm_workload() {
+    echo "KVM container workload"
+    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/kvm:latest
+    ${PODMAN} container runlabel install ${IMAGE}
+    kvm-container-manage.sh create
+    kvm-container-manage.sh start
+    virt-install.sh
+}
+
+
+yast_ncurses_workload() {
+    echo "Yast ncurses"
+    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/yast-mgmt-ncurses:latest
+    ${PODMAN} container runlabel run ${IMAGE}
+}
+
+
+cockpit_workload() {
+    echo "Cockpit Web Management"
+    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/cockpit-ws:latest
+    ${PODMAN} container runlabel install ${IMAGE}
+    ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
+    echo "Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:9090"
+}
+
+grafana_workload() {
+    echo "Grafana Web interface"
+    IMAGE=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest
+    ${PODMAN} container runlabel install ${IMAGE}
+    grafana-container-manage.sh create
+    grafana-container-manage.sh start
+    cat <<EOF
+	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000"
+	login with admin / admin
+EOF
+}
+
+usage() {
+    cat <<EOF
+	This is a DEMO script to TEST some ALP OS workload
+
+    	First arg should be the workload to start
+kvm	
+	KVM container workload
+		
+yast
+	Yast ncurses
+
+cockpit
+	Cockpit Web Management
+	https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
+
+grafana
+	Grafana Web interface
+	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+
+EOF
+	exit 0
+}
+
+
+if [ $# -eq 1 ]; then
+    case $1 in
+	kvm)
+	    kvm_workload
+	    ;;
+	yast)
+	    yast_ncurses_workload
+	    ;;
+	cockpit)
+	    cockpit_workload
+	    ;;
+	grafana)
+	    grafana_workload
+	    ;;
+	help)
+	    usage
+	    ;;
+    esac
+else
+    usage
+fi
