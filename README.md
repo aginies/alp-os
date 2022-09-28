@@ -10,7 +10,7 @@ This script doesnt remove the container or stop the workload.
 * kvm: KVM container workload
 * yast: Yast ncurses
 * cockpit: Cockpit Web Management
-** https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
+   * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Grafana Web interface
-** https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+   * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
