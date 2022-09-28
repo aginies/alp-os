@@ -1,43 +1,66 @@
 #!/bin/sh
 # aginies@suse.com
-# quick script to easily start workload on ALP OS
+#
+# Quick script to easily start workload on ALP OS
+# currently available one are at:
+# https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 
 PODMAN=/usr/bin/podman
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 
+# Waiting ENTER key press from the user
 press_enter() {
     cat <<EOF
 
+--------------------------------------------
  Press ENTER to continue or Crtl+c to Abort
- -------------------------------------------
+--------------------------------------------
 EOF
 read
 }
 
+# To display encapsuled info text with #
+show_info() {
+	nbchar="${1//[*]}"
+	count=-1
+	echo
+	while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
+	echo; echo " $1"
+	count=-1
+	while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
+	echo
+}
+
 kvm_workload() {
-    echo " KVM container workload"
-    IMAGE=${WORKLOADPATH}/kvm:latest
+    NAME=$1
+    show_info "KVM container workload"
+    # be sure that it fails in case of error (ie: detection of the kernel-default)
+    set -eu
+    IMAGE=${WORKLOADPATH}/${NAME}
     press_enter
     ${PODMAN} container runlabel install ${IMAGE}
     kvm-container-manage.sh info
     kvm-container-manage.sh create
     kvm-container-manage.sh start
+    echo "- Starting the installation of a VM"
     virt-install.sh
 }
 
 
 yast_ncurses_workload() {
-    echo " Yast ncurses"
+    NAME=$1
+    show_info "Yast ncurses"
     press_enter
-    IMAGE=${WORKLOADPATH}/yast-mgmt-ncurses:latest
+    IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel run ${IMAGE}
 }
 
 
 cockpit_workload() {
-    echo " Cockpit Web Management workload"
+    NAME=$1
+    show_info "Cockpit Web Management workload"
     press_enter
-    IMAGE=${WORKLOADPATH}/cockpit-ws:latest
+    IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
     cat <<EOF
@@ -48,40 +71,60 @@ EOF
 }
 
 grafana_workload() {
-    echo " Grafana Web interface workload"
+    NAME=$1
+    show_info "Grafana Web interface workload"
     press_enter
-    IMAGE=${WORKLOADPATH}/grafana:latest
+    IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
     grafana-container-manage.sh create
     grafana-container-manage.sh start
     cat <<EOF
 
-	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000"
+	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 	login with admin / admin
 
 EOF
 }
 
+# check if a container exist
+# if it exist check that it is started or not
+# display some help command to stop and remove the already existing container
 check_container() {
+	if [ -z "$1" ]; then echo "Need a container name to check!"; exit 1; fi
+	# first ARG is the container name to check
 	CONTAINER=$1
+	# Check container has been created
 	TEST=`podman ps --all --format "{{.Names}}" | grep ${CONTAINER}`
 	if [ -z "$TEST" ]; then
 	    echo ""
 	else
-	    cat <<EOF
-	${CONTAINER} already created!
+	    # check container is already started
+	    TEST2=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
+            if [ ! -z "$TEST2" ]; then IFSTARTED=" and started"; else IFSTARTED=""; fi 
+	show_info "${CONTAINER} container already created$IFSTARTED!"
+	if [ -z "$TEST2" ]; then
+	cat <<EOF
+- To start the container:
+podman start ${CONTAINER}
 
-        To start the container:
-	podman start ${CONTAINER}
-
-	To remove the container:
-	podman stop ${CONTAINER}
-	podman rm ${CONTAINER}
 EOF
-	    exit 1
+	fi
+	cat <<EOF
+- To remove the container:
+EOF
+	if [ ! -z "$TEST2" ]; then
+	cat <<EOF
+podman stop ${CONTAINER}
+EOF
+	fi
+	cat <<EOF
+podman rm ${CONTAINER}
+EOF
+        exit 1
 	fi
 }
 
+# classical help
 usage() {
     cat <<EOF
 
@@ -89,7 +132,7 @@ usage() {
 	This script doesn't stop your container (podman stop CONTAINER)
 
     	First arg should be the workload to start
-        $0 [kvm|yast|cockpit|grafana]
+        $0 [kvm|yast|cockpit|grafana|help]
 
 kvm	
 	KVM container workload (libvirtd)
@@ -109,24 +152,23 @@ EOF
 	exit 0
 }
 
-
+# Catching what to do
 if [ $# -eq 1 ]; then
     case $1 in
 	kvm)
 	    check_container libvirtd
-	    set -eu
-	    kvm_workload
+	    kvm_workload kvm:latest
 	    ;;
 	yast)
-	    yast_ncurses_workload
+	    yast_ncurses_workload yast-mgmt-ncurses:latest
 	    ;;
 	cockpit)
 	    check_container cockpit-ws
-	    cockpit_workload
+	    cockpit_workload cockpit-ws:latest
 	    ;;
 	grafana)
 	    check_container grafana
-	    grafana_workload
+	    grafana_workload grafana:latest
 	    ;;
 	help)
 	    usage
