@@ -5,6 +5,10 @@ This is a DEMO script to TEST some ALP OS workload.
 First arg should be the workload to start.
 This script doesnt remove the container or stop the workload.
 
+# Usage
+
+./demo_start_workload [kvm|yast|cockpit|grafana]
+
 # Workloads available
 
 * kvm: KVM container workload
