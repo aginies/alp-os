@@ -48,6 +48,20 @@ grafana_workload() {
 EOF
 }
 
+check_container() {
+	CONTAINER=$1
+	TEST=`podman ps --all --format "{{.Names}}" | grep ${CONTAINER}`
+	if [ -z "$TEST" ]; then
+	    echo "No Previous ${CONTAINER} created"
+	else
+	    cat <<EOF
+	${CONTAINER} already created, to start it:
+	podman start ${CONTAINER}
+EOF
+	    exit 1
+	fi
+}
+
 usage() {
     cat <<EOF
 
@@ -55,18 +69,20 @@ usage() {
 	This script doesn't stop your container (podman stop CONTAINER)
 
     	First arg should be the workload to start
+        $0 [kvm|yast|cockpit|grafana]
+
 kvm	
-	KVM container workload
+	KVM container workload (libvirtd)
 		
 yast
 	Yast ncurses
 
 cockpit
-	Cockpit Web Management
+	Cockpit Web Management (cockpit-ws)
 	https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 
 grafana
-	Grafana Web Interface
+	Grafana Web Interface (grafana)
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
 EOF
@@ -77,15 +93,18 @@ EOF
 if [ $# -eq 1 ]; then
     case $1 in
 	kvm)
+	    check_container libvirtd
 	    kvm_workload
 	    ;;
 	yast)
 	    yast_ncurses_workload
 	    ;;
 	cockpit)
+	    check_container cockpit-ws
 	    cockpit_workload
 	    ;;
 	grafana)
+	    check_container grafana
 	    grafana_workload
 	    ;;
 	help)
