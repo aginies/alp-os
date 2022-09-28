@@ -15,7 +15,7 @@ read
 }
 
 kvm_workload() {
-    echo "KVM container workload"
+    echo " KVM container workload"
     IMAGE=${WORKLOADPATH}/kvm:latest
     ${PODMAN} container runlabel install ${IMAGE}
     kvm-container-manage.sh info
@@ -27,7 +27,7 @@ kvm_workload() {
 
 
 yast_ncurses_workload() {
-    echo "Yast ncurses"
+    echo " Yast ncurses"
     press_enter
     IMAGE=${WORKLOADPATH}/yast-mgmt-ncurses:latest
     ${PODMAN} container runlabel run ${IMAGE}
@@ -35,7 +35,7 @@ yast_ncurses_workload() {
 
 
 cockpit_workload() {
-    echo "Cockpit Web Management"
+    echo " Cockpit Web Management workload"
     press_enter
     IMAGE=${WORKLOADPATH}/cockpit-ws:latest
     ${PODMAN} container runlabel install ${IMAGE}
@@ -48,7 +48,7 @@ EOF
 }
 
 grafana_workload() {
-    echo "Grafana Web interface"
+    echo " Grafana Web interface workload"
     press_enter
     IMAGE=${WORKLOADPATH}/grafana:latest
     ${PODMAN} container runlabel install ${IMAGE}
@@ -66,8 +66,7 @@ check_container() {
 	CONTAINER=$1
 	TEST=`podman ps --all --format "{{.Names}}" | grep ${CONTAINER}`
 	if [ -z "$TEST" ]; then
-	    echo
-	    echo "No Previous ${CONTAINER} container created"
+	    echo ""
 	else
 	    cat <<EOF
 	${CONTAINER} already created!
