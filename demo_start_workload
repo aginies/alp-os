@@ -7,6 +7,7 @@ WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/
 
 press_enter() {
     cat <<EOF
+
  Press ENTER to continue or Crtl+c to Abort
  -------------------------------------------
 EOF
@@ -65,7 +66,8 @@ check_container() {
 	CONTAINER=$1
 	TEST=`podman ps --all --format "{{.Names}}" | grep ${CONTAINER}`
 	if [ -z "$TEST" ]; then
-	    echo "No Previous ${CONTAINER} created"
+	    echo
+	    echo "No Previous ${CONTAINER} container created"
 	else
 	    cat <<EOF
 	${CONTAINER} already created!
