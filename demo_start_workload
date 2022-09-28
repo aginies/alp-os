@@ -3,7 +3,7 @@
 # quick script to easily start workload on ALP OS
 
 PODMAN=/usr/bin/podman
-WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/
+WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 
 kvm_workload() {
     echo "KVM container workload"
