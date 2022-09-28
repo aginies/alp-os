@@ -17,9 +17,9 @@ read
 kvm_workload() {
     echo " KVM container workload"
     IMAGE=${WORKLOADPATH}/kvm:latest
+    press_enter
     ${PODMAN} container runlabel install ${IMAGE}
     kvm-container-manage.sh info
-    press_enter
     kvm-container-manage.sh create
     kvm-container-manage.sh start
     virt-install.sh
