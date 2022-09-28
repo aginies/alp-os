@@ -2,13 +2,11 @@
 # aginies@suse.com
 #
 # Quick script to easily start workload on ALP OS
-# currently available one are at:
 # https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 
 PODMAN=/usr/bin/podman
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 
-# Waiting ENTER key press from the user
 press_enter() {
     cat <<EOF
 
@@ -19,16 +17,16 @@ EOF
 read
 }
 
-# To display encapsuled info text with #
 show_info() {
-	nbchar="${1//[*]}"
-	count=-1
-	echo
-	while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
-	echo; echo " $1"
-	count=-1
-	while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
-	echo
+    # To display encapsuled text with #
+    nbchar="${1//[*]}"
+    count=-1
+    echo 
+    while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
+    echo; echo " $1"
+    count=-1
+    while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
+    echo
 }
 
 kvm_workload() {
@@ -70,6 +68,16 @@ cockpit_workload() {
 EOF
 }
 
+firewalld_workload() {
+    NAME=$1
+    show_info "Firewalld workload"
+    press_enter
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} create --name firewalld --privileged --init --cgroupns host --network host ${IMAGE}
+    ${PODMAN} start firewalld
+}
+
+
 grafana_workload() {
     NAME=$1
     show_info "Grafana Web interface workload"
@@ -86,9 +94,6 @@ grafana_workload() {
 EOF
 }
 
-# check if a container exist
-# if it exist check that it is started or not
-# display some help command to stop and remove the already existing container
 check_container() {
 	if [ -z "$1" ]; then echo "Need a container name to check!"; exit 1; fi
 	# first ARG is the container name to check
@@ -101,7 +106,7 @@ check_container() {
 	    # check container is already started
 	    TEST2=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
             if [ ! -z "$TEST2" ]; then IFSTARTED=" and started"; else IFSTARTED=""; fi 
-	show_info "${CONTAINER} container already created$IFSTARTED!"
+	show_info "${CONTAINER} already created$IFSTARTED!"
 	if [ -z "$TEST2" ]; then
 	cat <<EOF
 - To start the container:
@@ -124,14 +129,14 @@ EOF
 	fi
 }
 
-# classical help
 usage() {
     cat <<EOF
 
 	This is a DEMO script to TEST some ALP OS workload
+	This script doesn't stop your container (podman stop CONTAINER)
 
-	First arg should be the workload to start:
-        $0 [kvm|yast|cockpit|grafana|help]
+   	First arg should be the workload to start
+        $0 [kvm|yast|cockpit|grafana|firewalld|help]
 
 kvm	
 	KVM container workload (libvirtd)
@@ -147,11 +152,14 @@ grafana
 	Grafana Web Interface (grafana)
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
+firewalld
+	firewalld container
+
 EOF
 	exit 0
 }
 
-# Catching what to do
+
 if [ $# -eq 1 ]; then
     case $1 in
 	kvm)
@@ -169,7 +177,14 @@ if [ $# -eq 1 ]; then
 	    check_container grafana
 	    grafana_workload grafana:latest
 	    ;;
+	firewalld)
+	    check_container firewalld
+	    firewalld_workload firewalld:latest
+	    ;;
 	help)
+	    usage
+	    ;;
+	*)
 	    usage
 	    ;;
     esac
