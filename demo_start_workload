@@ -76,6 +76,7 @@ check_container() {
 	podman start ${CONTAINER}
 
 	To remove the container:
+	podman stop ${CONTAINER}
 	podman rm ${CONTAINER}
 EOF
 	    exit 1
