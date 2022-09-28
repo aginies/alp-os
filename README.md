@@ -7,7 +7,7 @@ This script doesnt remove the container or stop the workload.
 
 # Usage
 
-./demo_start_workload [kvm|yast|cockpit|grafana|help]
+./demo_start_workload [kvm|yast|cockpit|grafana|firewalld|help]
 
 # Workloads available currently
 
@@ -17,6 +17,7 @@ This script doesnt remove the container or stop the workload.
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Grafana Web interface
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+* firewalld
 
 # Official path to workloads 
 
