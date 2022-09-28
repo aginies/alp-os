@@ -114,6 +114,7 @@ if [ $# -eq 1 ]; then
     case $1 in
 	kvm)
 	    check_container libvirtd
+	    set -eu
 	    kvm_workload
 	    ;;
 	yast)
