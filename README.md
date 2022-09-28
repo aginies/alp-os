@@ -1,18 +1,16 @@
 
-	This is a DEMO script to TEST some ALP OS workload
+# Goal
+This is a DEMO script to TEST some ALP OS workload.
 
-    	First arg should be the workload to start
-kvm	
-	KVM container workload
-		
-yast
-	Yast ncurses
+First arg should be the workload to start.
+This script doesnt remove the container or stop the workload.
 
-cockpit
-	Cockpit Web Management
-	https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
+# Workloads available
 
-grafana
-	Grafana Web interface
-	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+* kvm: KVM container workload
+* yast: Yast ncurses
+* cockpit: Cockpit Web Management
+ https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
+* grafana: Grafana Web interface
+ Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
