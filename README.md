@@ -24,6 +24,10 @@ This script doesnt remove the container or stop the workload.
 
 https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 
+# Official Documentation
+
+https://documentation.suse.com/alp/all/
+
 # Example
 
 ```bash
