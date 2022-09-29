@@ -158,7 +158,7 @@ usage() {
     cat <<EOF
 
 	This is a DEMO script to TEST some ALP OS workload
-	This script doesn't stop your container (podman stop CONTAINER)
+	https://documentation.suse.com/alp/all/
 
    	First arg should be the workload to start
         $0 [kvm|yast|cockpit|grafana|firewalld|help]
