@@ -21,7 +21,7 @@ show_info() {
     # To display encapsuled text with #
     nbchar="${1//[*]}"
     count=-1
-    echo 
+    echo
     while [ $count -le ${#nbchar} ]; do ((count++)); echo -n "#"; done
     echo; echo " $1"
     count=-1

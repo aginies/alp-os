@@ -28,9 +28,6 @@ https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 ```bash
  # demo_start_workload grafana
 
- # demo_start_workload grafana
-
-
 ################################
  Grafana Web interface workload
 ################################
