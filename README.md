@@ -28,6 +28,8 @@ https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 ```bash
  # demo_start_workload grafana
 
+ # demo_start_workload grafana
+
 
 ################################
  Grafana Web interface workload
@@ -38,15 +40,18 @@ https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 --------------------------------------------
 
 LABEL INSTALL
-/host/usr/local/bin/grafana-container-manage.sh already exist
-cp: cannot stat '/container/grafana.service': No such file or directory
-/host/etc/grafana-container.conf already exist
-/host/etc/grafana-functions already exist
+copy /container/grafana-container-manage.sh in /host/usr/local/bin/
+'/container/grafana-container-manage.sh' -> '/host/usr/local/bin/grafana-container-manage.sh'
+'/container/grafana.service' -> '/host/etc/systemd/system/grafana.service'
+copy /container/grafana-container.conf in /host/etc/
+'/container/grafana-container.conf' -> '/host/etc/grafana-container.conf'
+copy /container/grafana-functions in /host/etc/
+'/container/grafana-functions' -> '/host/etc/grafana-functions'
 using /etc/grafana-container.conf as configuration file
 + case $1 in
 + create_container
 + podman create --name grafana --tls-verify=false --network host registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest
-217e916967594612f371a517e93d815a1dcc9bf3132aab110a85da380f9e5eec
+dc5025fd78b4887edb2026b826aee01c056df03a9a00fbdde74b855b70bc66ea
 using /etc/grafana-container.conf as configuration file
 + case $1 in
 + podman start grafana
