@@ -7,12 +7,13 @@ This script doesnt remove the container or stop the workload.
 
 # Usage
 
-./demo_start_workload [kvm|yast|cockpit|grafana|firewalld|help]
+./demo_start_workload [kvm|yast|yastqt|cockpit|grafana|firewalld|help]
 
 # Workloads available currently
 
 * kvm: KVM container workload
 * yast: Yast ncurses
+* yastqt: Yast qt
 * cockpit: Cockpit Web Management
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Grafana Web interface

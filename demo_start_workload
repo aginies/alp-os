@@ -53,6 +53,31 @@ yast_ncurses_workload() {
     ${PODMAN} container runlabel run ${IMAGE}
 }
 
+yast_qt_workload() {
+    NAME=$1
+    show_info "Yast QT"
+    press_enter
+    TEST=`rpm -qa | grep xauth`
+    if [ -z "$TEST" ]; then
+    	cat <<EOF
+You need to install xauth and reboot:
+transactional-update pkg install xauth
+reboot
+EOF
+    else
+    cat <<EOF
+Its important to connect with ssh to the ALP OS using the -X (forwarding option):
+ssh -X root@ALPOSIP
+
+If not you will have a message similar to:
+YaST in container: $DISPLAY is not defined for graphical frontend
+EOF
+    press_enter
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} container runlabel run ${IMAGE}
+    fi
+}
+
 
 cockpit_workload() {
     NAME=$1
@@ -144,6 +169,9 @@ kvm
 yast
 	Yast ncurses
 
+yastqt
+	Yast qt
+
 cockpit
 	Cockpit Web Management (cockpit-ws)
 	https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
@@ -169,6 +197,10 @@ if [ $# -eq 1 ]; then
 	yast)
 	    yast_ncurses_workload yast-mgmt-ncurses:latest
 	    ;;
+	yastqt)
+	    yast_qt_workload yast-mgmt-qt:latest
+	    ;;
+
 	cockpit)
 	    check_container cockpit-ws
 	    cockpit_workload cockpit-ws:latest
