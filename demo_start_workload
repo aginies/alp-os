@@ -29,6 +29,27 @@ show_info() {
     echo
 }
 
+xauth_needed() {
+    TEST=`rpm -qa | grep xauth`
+    if [ -z "$TEST" ]; then
+    	cat <<EOF
+You need to install xauth and reboot:
+transactional-update pkg install xauth
+reboot
+EOF
+    fi
+}
+
+warning_xauth() {
+    cat <<EOF
+Its important to connect with ssh to the ALP OS using the -X (forwarding option):
+ssh -X root@ALPOSIP
+
+If not you will have a message similar to:
+$DISPLAY is not defined for graphical frontend
+EOF
+}
+
 kvm_workload() {
     NAME=$1
     show_info "KVM container workload"
@@ -40,8 +61,8 @@ kvm_workload() {
     kvm-container-manage.sh info
     kvm-container-manage.sh create
     kvm-container-manage.sh start
-    echo "- Starting the installation of a VM"
-    virt-install.sh
+    echo "- Starting a demo installation of a VM"
+    virt-install-demo.sh
 }
 
 
@@ -56,27 +77,24 @@ yast_ncurses_workload() {
 yast_qt_workload() {
     NAME=$1
     show_info "Yast QT"
-    press_enter
-    TEST=`rpm -qa | grep xauth`
-    if [ -z "$TEST" ]; then
-    	cat <<EOF
-You need to install xauth and reboot:
-transactional-update pkg install xauth
-reboot
-EOF
-    else
-    cat <<EOF
-Its important to connect with ssh to the ALP OS using the -X (forwarding option):
-ssh -X root@ALPOSIP
-
-If not you will have a message similar to:
-YaST in container: $DISPLAY is not defined for graphical frontend
-EOF
+    xauth_neded
+    warning_xauth
     press_enter
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel run ${IMAGE}
-    fi
 }
+
+virtm_workload() {
+    NAME=$1
+    show_info "Virt-manager QT"
+    xauth_neded
+    warning_xauth
+    press_enter
+    WORKLOADPATH=registry.opensuse.org/home/aginies/branches/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} container runlabel run ${IMAGE}
+}
+
 
 
 cockpit_workload() {
@@ -166,11 +184,13 @@ usage() {
 kvm	
 	KVM container workload (libvirtd)
 		
+virtm
+	launch virt-manager
 yast
-	Yast ncurses
+	Launch Yast ncurses (console)
 
 yastqt
-	Yast qt
+	Launch Yast qt (graphics)
 
 cockpit
 	Cockpit Web Management (cockpit-ws)
@@ -193,6 +213,10 @@ if [ $# -eq 1 ]; then
 	kvm)
 	    check_container libvirtd
 	    kvm_workload kvm:latest
+	    ;;
+	virtm)
+	    #check_container libvirtd
+	    virtm_workload virt-manager:latest
 	    ;;
 	yast)
 	    yast_ncurses_workload yast-mgmt-ncurses:latest
