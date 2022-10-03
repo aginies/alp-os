@@ -58,7 +58,7 @@ using /etc/grafana-container.conf as configuration file
 + case $1 in
 + podman start grafana
 grafana
-+ podman ps
++ podman ps | grep grafana
 CONTAINER ID  IMAGE                                                                                                    COMMAND               CREATED                 STATUS                     PORTS       NAMES
 217e91696759  registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest                           Less than a second ago  Up Less than a second ago              grafana
 
