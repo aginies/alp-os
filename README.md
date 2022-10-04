@@ -1,9 +1,15 @@
 
 # Goal
-This is a DEMO script to TEST some ALP OS workload.
+
+This is a WRAPPER script to test some ALP OS workload.
+ALP is a lightweight operating system. Instead of applications 
+distributed in traditional software packages, it runs 
+containerized and virtualized workloads.
 
 First arg should be the workload to start.
-This script doesnt remove the container or stop the workload.
+This script doesnt remove the container or stop the workload, its just
+a wrapper to quickly launch your workload. It provides some help guidance
+in case of issue.
 
 # Usage
 
@@ -25,7 +31,7 @@ This script doesnt remove the container or stop the workload.
 
 ![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
 
-# Official path to workloads 
+# Official path to workloads
 
 https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 
