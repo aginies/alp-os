@@ -10,6 +10,8 @@ This script doesnt remove the container or stop the workload, its just
 a wrapper to quickly launch your workload. It provides some help guidance
 in case of issue.
 
+![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
+
 # Usage
 
 First arg should be the workload to start.
@@ -28,9 +30,6 @@ First arg should be the workload to start.
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 * firewalld
 
-# Demo
-
-![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
 
 # Official path to workloads
 
