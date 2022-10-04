@@ -5,8 +5,10 @@
 # https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 
 PODMAN=/usr/bin/podman
+# official repo
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 
+# useful to wait for input
 press_enter() {
     cat <<EOF
 
@@ -29,6 +31,7 @@ show_info() {
     echo
 }
 
+# xauth is required for GUI app
 xauth_needed() {
     TEST=`rpm -qa | grep xauth`
     if [ -z "$TEST" ]; then
@@ -40,6 +43,7 @@ EOF
     fi
 }
 
+# display info about xauth
 warning_xauth() {
     cat <<EOF
 Its important to connect with ssh to the ALP OS using the -X (forwarding option):
@@ -48,6 +52,18 @@ ssh -X root@ALPOSIP
 If not you will have a message similar to:
 $DISPLAY is not defined for graphical frontend
 EOF
+}
+
+# grab exact IP address
+get_ip() {
+    # grab all interfaces
+    ALLINTERFACE=`nmcli connection show --active | grep -v NAME | cut -d " " -f 1`
+    # grab IP
+    for INTERFACE in `echo $ALLINTERFACE` ; do
+	    #echo -n "$INTERFACE: "
+	    ip -4 addr show $INTERFACE | grep -oP "(?<=inet ).*(?=/)"
+	    echo -n $IP
+    done
 }
 
 kvm_workload() {
@@ -99,11 +115,11 @@ cockpit_workload() {
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
-    cat <<EOF
-
-	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
-
-EOF
+    DATA=$(get_ip)
+    echo
+    for list in $DATA; do
+	    echo "	Go to https://$list:9090"
+    done
 }
 
 firewalld_workload() {
@@ -123,9 +139,13 @@ grafana_workload() {
     ${PODMAN} container runlabel install ${IMAGE}
     grafana-container-manage.sh create
     grafana-container-manage.sh start
-    cat <<EOF
+    echo 
+    DATA=$(get_ip)
+    for list in $DATA; do
+	    echo "	Go to https://$list:3000"
+    done
 
-	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+cat <<EOF
 	login with admin / admin
 
 EOF
