@@ -102,7 +102,7 @@ yast_qt_workload() {
 
 virtm_workload() {
     show_info "Virt-manager QT"
-    xauth_neded
+    xauth_needed
     warning_xauth
     press_enter
     virt-manager.sh
