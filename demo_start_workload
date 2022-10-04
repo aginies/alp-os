@@ -77,7 +77,7 @@ yast_ncurses_workload() {
 yast_qt_workload() {
     NAME=$1
     show_info "Yast QT"
-    xauth_neded
+    xauth_needed
     warning_xauth
     press_enter
     IMAGE=${WORKLOADPATH}/${NAME}
@@ -91,8 +91,6 @@ virtm_workload() {
     press_enter
     virt-manager.sh
 }
-
-
 
 cockpit_workload() {
     NAME=$1
@@ -116,7 +114,6 @@ firewalld_workload() {
     ${PODMAN} create --name firewalld --privileged --init --cgroupns host --network host ${IMAGE}
     ${PODMAN} start firewalld
 }
-
 
 grafana_workload() {
     NAME=$1
