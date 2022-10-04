@@ -67,3 +67,7 @@ CONTAINER ID  IMAGE                                                             
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 	login with admin / admin
 ```
+
+# Demo
+
+![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
