@@ -1,19 +1,20 @@
 
 # Goal
 
-This is a WRAPPER script to test some ALP OS workload.
-ALP is a lightweight operating system. Instead of applications 
+This is a **WRAPPER** script to test some **[ALP OS](https://github.com/aginies/alp-os#official-documentation)** workload.
+**ALP** is a SUSE lightweight operating system. Instead of applications 
 distributed in traditional software packages, it runs 
 containerized and virtualized workloads.
 
-First arg should be the workload to start.
 This script doesnt remove the container or stop the workload, its just
 a wrapper to quickly launch your workload. It provides some help guidance
 in case of issue.
 
 # Usage
 
- demo_start_workload [kvm|yast|cockpit|grafana|firewalld|virtm|help]
+First arg should be the workload to start.
+
+`demo_start_workload [kvm|yast|cockpit|grafana|firewalld|virtm|help]`
 
 # Workloads available currently
 
