@@ -21,6 +21,10 @@ This script doesnt remove the container or stop the workload.
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 * firewalld
 
+# Demo
+
+![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
+
 # Official path to workloads 
 
 https://build.opensuse.org/project/show/SUSE:ALP:Workloads
@@ -68,6 +72,4 @@ CONTAINER ID  IMAGE                                                             
 	login with admin / admin
 ```
 
-# Demo
 
-![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
