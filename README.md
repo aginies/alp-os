@@ -7,13 +7,14 @@ This script doesnt remove the container or stop the workload.
 
 # Usage
 
-./demo_start_workload [kvm|yast|yastqt|cockpit|grafana|firewalld|help]
+ demo_start_workload [kvm|yast|cockpit|grafana|firewalld|virtm|help]
 
 # Workloads available currently
 
 * kvm: KVM container workload
-* yast: Yast ncurses
-* yastqt: Yast qt
+* yast: launch Yast ncurses
+* yastqt: launch Yast qt
+* virtm: launch virt-manager (needs KVM ready)
 * cockpit: Cockpit Web Management
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Grafana Web interface
@@ -58,7 +59,8 @@ using /etc/grafana-container.conf as configuration file
 + case $1 in
 + podman start grafana
 grafana
-+ podman ps | grep grafana
++ podman ps 
++ grep grafana
 CONTAINER ID  IMAGE                                                                                                    COMMAND               CREATED                 STATUS                     PORTS       NAMES
 217e91696759  registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest                           Less than a second ago  Up Less than a second ago              grafana
 
