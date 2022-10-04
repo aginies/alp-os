@@ -85,14 +85,11 @@ yast_qt_workload() {
 }
 
 virtm_workload() {
-    NAME=$1
     show_info "Virt-manager QT"
     xauth_neded
     warning_xauth
     press_enter
-    WORKLOADPATH=registry.opensuse.org/home/aginies/branches/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
-    IMAGE=${WORKLOADPATH}/${NAME}
-    ${PODMAN} container runlabel run ${IMAGE}
+    virt-manager.sh
 }
 
 
@@ -134,6 +131,17 @@ grafana_workload() {
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 	login with admin / admin
 
+EOF
+}
+
+check_running() {
+	# first ARG is the container name to check
+        CONTAINER=$1
+	TEST=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
+	cat <<EOF
+ ${CONTAINER} Must be started"
+
+podman start ${CONTAINER}
 EOF
 }
 
@@ -179,13 +187,14 @@ usage() {
 	https://documentation.suse.com/alp/all/
 
    	First arg should be the workload to start
-        $0 [kvm|yast|cockpit|grafana|firewalld|help]
+        $0 [kvm|yast|cockpit|grafana|firewalld|virtm|help]
 
 kvm	
 	KVM container workload (libvirtd)
 		
 virtm
 	launch virt-manager
+
 yast
 	Launch Yast ncurses (console)
 
@@ -215,8 +224,8 @@ if [ $# -eq 1 ]; then
 	    kvm_workload kvm:latest
 	    ;;
 	virtm)
-	    #check_container libvirtd
-	    virtm_workload virt-manager:latest
+	    check_running libvirtd
+	    virtm_workload 
 	    ;;
 	yast)
 	    yast_ncurses_workload yast-mgmt-ncurses:latest
