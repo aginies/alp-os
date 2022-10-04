@@ -77,7 +77,9 @@ kvm_workload() {
     kvm-container-manage.sh info
     kvm-container-manage.sh create
     kvm-container-manage.sh start
+    echo
     echo "- Starting a demo installation of a VM"
+    press_enter
     virt-install-demo.sh
 }
 
@@ -101,7 +103,7 @@ yast_qt_workload() {
 }
 
 virtm_workload() {
-    show_info "Virt-manager QT"
+    show_info "Virt-manager"
     xauth_needed
     warning_xauth
     press_enter
@@ -155,11 +157,18 @@ check_running() {
 	# first ARG is the container name to check
         CONTAINER=$1
 	TEST=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
+	if [ -z "$TEST" ]; then
 	cat <<EOF
  ${CONTAINER} Must be started"
 
 podman start ${CONTAINER}
+
+OR
+
+$0 kvm
 EOF
+	exit 1
+	fi
 }
 
 check_container() {
@@ -227,7 +236,8 @@ grafana
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
 firewalld
-	firewalld container
+	firewalld container (WIP)
+	(may set restrictibe rules...)
 
 EOF
 	exit 0
