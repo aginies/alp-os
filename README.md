@@ -53,29 +53,24 @@ https://documentation.suse.com/alp/all/
 --------------------------------------------
 
 LABEL INSTALL
-copy /container/grafana-container-manage.sh in /host/usr/local/bin/
-'/container/grafana-container-manage.sh' -> '/host/usr/local/bin/grafana-container-manage.sh'
-'/container/grafana.service' -> '/host/etc/systemd/system/grafana.service'
-copy /container/grafana-container.conf in /host/etc/
-'/container/grafana-container.conf' -> '/host/etc/grafana-container.conf'
-copy /container/grafana-functions in /host/etc/
-'/container/grafana-functions' -> '/host/etc/grafana-functions'
+/host/usr/local/bin/grafana-container-manage.sh already exist
+/host/etc/systemd/system/grafana.service already exist
+/host/etc/grafana-container.conf already exist
+/host/etc/grafana-functions already exist
 using /etc/grafana-container.conf as configuration file
 + case $1 in
 + create_container
 + podman create --name grafana --tls-verify=false --network host registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest
-dc5025fd78b4887edb2026b826aee01c056df03a9a00fbdde74b855b70bc66ea
+64b4a30180e38fa769893a2bed64bcfb61a67e06696ccec798738e47deffc387
 using /etc/grafana-container.conf as configuration file
 + case $1 in
 + podman start grafana
 grafana
-+ podman ps 
++ podman ps --all --format '{{.Names}}'
 + grep grafana
-CONTAINER ID  IMAGE                                                                                                    COMMAND               CREATED                 STATUS                     PORTS       NAMES
-217e91696759  registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/grafana:latest                           Less than a second ago  Up Less than a second ago              grafana
+grafana
 
-	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+	Go to https://10.0.1.38:3000
+	Go to https://192.168.10.1:3000
 	login with admin / admin
 ```
-
-
