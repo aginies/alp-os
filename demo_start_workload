@@ -216,27 +216,28 @@ usage() {
         $0 [kvm|yast|cockpit|grafana|firewalld|virtm|help]
 
 kvm	
-	KVM container workload (libvirtd)
+	Prepare system to deploy Virtual Machine
+	(Kvm container workload libvirtd)
 		
 virtm
-	launch virt-manager
+	Manage Virtual Machine (virt-manager)
 
 yast
-	Launch Yast ncurses (console)
+	Manage you host OS (console)
 
 yastqt
-	Launch Yast qt (graphics)
+	Manage your host OS (GUI)
 
 cockpit
-	Cockpit Web Management (cockpit-ws)
+	Manage you host OS (Cockpit Web Management cockpit-ws)
 	https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 
 grafana
-	Grafana Web Interface (grafana)
+	Monitoring System (Grafana Web Interface grafana)
 	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
 firewalld
-	firewalld container (WIP)
+	Firewall Management (firewalld WIP)
 	(may set restrictibe rules...)
 
 EOF

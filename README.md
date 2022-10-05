@@ -20,13 +20,13 @@ First arg should be the workload to start.
 
 # Workloads available currently
 
-* kvm: KVM container workload
-* yast: launch Yast ncurses
-* yastqt: launch Yast qt
-* virtm: launch virt-manager (needs KVM ready)
-* cockpit: Cockpit Web Management
+* kvm: Prepare system to deploy Virtual Machine
+* yast: Manage you host OS (console)
+* yastqt: Manage you host OS (GUI)
+* virtm: Manage Virtual Machine
+* cockpit: Manage you host OS (Web)
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
-* grafana: Grafana Web interface
+* grafana: Monitoring System
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 * firewalld
 
