@@ -10,7 +10,7 @@ This script doesnt remove the container or stop the workload, its just
 a wrapper to quickly launch your workload. It provides some help guidance
 in case of issue.
 
-![image](https://github.com/aginies/alp-os/blob/5faca93cc34f3cd9041d2c5f03604c3502c9eff5/alp_OS_SUSE.gif)
+![image](https://github.com/aginies/alp-os/blob/53b0e807fa649cba70abb81b3ca85cd60d8f97ef/alp_OS_SUSE.gif)
 
 # Usage
 
