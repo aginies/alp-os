@@ -32,6 +32,7 @@ First arg should be the workload to start.
 
 # Install the wrapper script on ALP OS 
 
+## With podman
 ```
 podman container runlabel install registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
 ```
@@ -39,6 +40,14 @@ podman container runlabel install registry.opensuse.org/home/aginies/branches/op
 If you have a previous installation just remove the container in cache:
 ```
 podman rmi registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
+```
+
+## Just grab the script
+
+```bash
+wget https://raw.githubusercontent.com/aginies/alp-os/main/demo_start_workload
+chmod 755 demo_start_workload
+./demo_start_workload
 ```
 
 # Official path to workloads
