@@ -30,6 +30,16 @@ First arg should be the workload to start.
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 * firewalld
 
+# Install the wrapper script on ALP OS 
+
+```
+podman container runlabel install registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
+```
+
+If you have a previous installation just remove the container in cache:
+```
+podman rmi registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
+```
 
 # Official path to workloads
 
