@@ -5,9 +5,26 @@
 # https://build.opensuse.org/project/show/SUSE:ALP:Workloads
 
 PODMAN=/usr/bin/podman
-# official repo
+# Official repo
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 
+# Improve console layout with some color
+txtund=$(tput sgr 0 1) # Underline
+txtbld=$(tput bold)             # Bold
+bldred=${txtbld}$(tput setaf 1) # red
+bldgreen=${txtbld}$(tput setaf 2) # green
+txtrst=$(tput sgr0)             # Reset
+info_warn() {
+    WARN=${bldred}$1${txtrst}
+    echo -e ${WARN}
+}
+info_cmd() {
+    CMDTXT=${txtund}${bldgreen}$1${txtrst}
+    echo -e ${CMDTXT}
+}
+
+
+### Some useful functions
 # useful to wait for input
 press_enter() {
     cat <<EOF
@@ -35,23 +52,21 @@ show_info() {
 xauth_needed() {
     TEST=`rpm -qa | grep xauth`
     if [ -z "$TEST" ]; then
-    	cat <<EOF
-You need to install xauth and reboot:
-transactional-update pkg install xauth
-reboot
-EOF
+	info_warn "WARNING! "
+    	echo -e "
+You need to install xauth and reboot:"
+	info_cmd "transactional-update pkg install xauth"
+	info_cmd "reboot"
     fi
 }
 
 # display info about xauth
 warning_xauth() {
-    cat <<EOF
-Its important to connect with ssh to the ALP OS using the -X (forwarding option):
-ssh -X root@ALPOSIP
-
-If not you will have a message similar to:
-$DISPLAY is not defined for graphical frontend
-EOF
+  	echo -e "
+Its mandatory to connect with ssh to the ALP OS using the -X (forwarding option):"
+	info_cmd "ssh -X root@ALPOSIP"
+	echo "If not you will have a message similar to:"
+	info_warn "${DISPLAY} is not defined for graphical frontend"
 }
 
 # grab exact IP address
@@ -60,11 +75,58 @@ get_ip() {
     ALLINTERFACE=`nmcli connection show --active | grep -v NAME | cut -d " " -f 1`
     # grab IP
     for INTERFACE in `echo $ALLINTERFACE` ; do
-	    #echo -n "$INTERFACE: "
-	    ip -4 addr show $INTERFACE | grep -oP "(?<=inet ).*(?=/)"
-	    echo -n $IP
+	#echo -n "$INTERFACE: "
+	ip -4 addr show $INTERFACE | grep -oP "(?<=inet ).*(?=/)"
+	echo -n $IP
     done
 }
+
+check_running() {
+    # first ARG is the container name to check
+    CONTAINER=$1
+    TEST=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
+    if [ -z "$TEST" ]; then
+	echo -e "
+ ${CONTAINER} Must be started"
+	info_cmd "podman start"
+	echo "
+OR
+"
+
+	info_cmd "$0 kvm"
+	exit 1
+	fi
+}
+
+check_container() {
+	if [ -z "$1" ]; then info_warn "Need a container name to check!"; exit 1; fi
+	# first ARG is the container name to check
+	CONTAINER=$1
+	# Check container has been created
+	TEST=`podman ps --all --format "{{.Names}}" | grep ${CONTAINER}`
+	if [ -z "$TEST" ]; then
+	    echo ""
+	else
+	    # check container is already started
+	    TEST2=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
+            if [ ! -z "$TEST2" ]; then IFSTARTED=" and started"; else IFSTARTED=""; fi 
+	    show_info "${CONTAINER} already created$IFSTARTED!"
+	    if [ -z "$TEST2" ]; then
+		echo -e "
+- To start the container:"
+		info_cmd "podman start ${CONTAINER}"
+	    fi
+	    echo -e "
+- To remove the container:"
+	    if [ ! -z "$TEST2" ]; then
+		info_cmd "podman stop ${CONTAINER}"
+	    fi
+	    info_cmd "podman rm ${CONTAINER}"
+            exit 1
+	fi
+}
+
+### WORKLOADS
 
 kvm_workload() {
     NAME=$1
@@ -115,12 +177,13 @@ cockpit_workload() {
     show_info "Cockpit Web Management workload"
     press_enter
     IMAGE=${WORKLOADPATH}/${NAME}
+    #IMAGE=localhost/co:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
     DATA=$(get_ip)
     echo
     for list in $DATA; do
-	    echo "	Go to https://$list:9090"
+	echo "	Go to https://$list:9090"
     done
 }
 
@@ -144,66 +207,13 @@ grafana_workload() {
     echo 
     DATA=$(get_ip)
     for list in $DATA; do
-	    echo "	Go to https://$list:3000"
+	echo "	Go to https://$list:3000"
     done
 
 cat <<EOF
 	login with admin / admin
 
 EOF
-}
-
-check_running() {
-	# first ARG is the container name to check
-        CONTAINER=$1
-	TEST=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
-	if [ -z "$TEST" ]; then
-	cat <<EOF
- ${CONTAINER} Must be started"
-
-podman start ${CONTAINER}
-
-OR
-
-$0 kvm
-EOF
-	exit 1
-	fi
-}
-
-check_container() {
-	if [ -z "$1" ]; then echo "Need a container name to check!"; exit 1; fi
-	# first ARG is the container name to check
-	CONTAINER=$1
-	# Check container has been created
-	TEST=`podman ps --all --format "{{.Names}}" | grep ${CONTAINER}`
-	if [ -z "$TEST" ]; then
-	    echo ""
-	else
-	    # check container is already started
-	    TEST2=`podman ps --format "{{.Names}}" | grep ${CONTAINER}`
-            if [ ! -z "$TEST2" ]; then IFSTARTED=" and started"; else IFSTARTED=""; fi 
-	show_info "${CONTAINER} already created$IFSTARTED!"
-	if [ -z "$TEST2" ]; then
-	cat <<EOF
-- To start the container:
-podman start ${CONTAINER}
-
-EOF
-	fi
-	cat <<EOF
-- To remove the container:
-EOF
-	if [ ! -z "$TEST2" ]; then
-	cat <<EOF
-podman stop ${CONTAINER}
-EOF
-	fi
-	cat <<EOF
-podman rm ${CONTAINER}
-EOF
-        exit 1
-	fi
 }
 
 usage() {
