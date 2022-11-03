@@ -32,6 +32,11 @@ First arg should be the workload to start.
 
 # Install the wrapper script on ALP OS 
 
+##
+
+You should use [SLE Micro](https://www.suse.com/products/micro/), [MicroOS]([https://microos.opensuse.org/) or an [ALP OS](https://download.opensuse.org/repositories/SUSE:/ALP:/PUBLISH/images/) to use this script.
+SLE OS is not providing **nmcli** or **cockpit-bridge** byt default.
+
 ## With podman
 ```
 podman container runlabel install registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
