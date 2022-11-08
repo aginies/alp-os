@@ -50,9 +50,9 @@ podman rmi registry.opensuse.org/home/aginies/branches/opensuse/templates/images
 ## Just grab the script
 
 ```bash
-wget https://raw.githubusercontent.com/aginies/alp-os/main/demo_start_workload
-chmod 755 demo_start_workload
-./demo_start_workload
+curl -L -o /usr/local/bin/demo_start_workload https://raw.githubusercontent.com/aginies/alp-os/main/demo_start_workload
+chmod 755 /usr/local/bin/demo_start_workload
+demo_start_workload
 ```
 
 # Official path to workloads
