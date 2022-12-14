@@ -72,15 +72,15 @@ Its mandatory to connect with ssh to the ALP OS using the -X (forwarding option)
 # grab exact IP address
 get_ip() {
     # grab all interfaces
-     FRND=`openssl rand -hex 5`
-     nmcli -g all | grep "^[a-z]" | grep connected | cut -d ":" -f 1 > /tmp/get_ip${FRND}
-     # grab IP
-     cat /tmp/get_ip${FRND} | while read line; 
-        do 
-        #echo $line
-        ip -4 addr show "$line" | grep -oP "(?<=inet ).*(?=/)"
-        echo -n $IP
-     done
+    FRND=`openssl rand -hex 5`
+    nmcli -g all | grep "^[a-z]" | grep connected | cut -d ":" -f 1 > /tmp/get_ip${FRND}
+    # grab IP
+    cat /tmp/get_ip${FRND} | while read line; 
+       do 
+       #echo $line
+       ip -4 addr show "$line" | grep -oP "(?<=inet ).*(?=/)"
+       echo -n $IP
+    done
     rm -f /tmp/get_ip${FRND}
 }
 
