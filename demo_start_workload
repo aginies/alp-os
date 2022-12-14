@@ -72,13 +72,16 @@ Its mandatory to connect with ssh to the ALP OS using the -X (forwarding option)
 # grab exact IP address
 get_ip() {
     # grab all interfaces
-    ALLINTERFACE=`nmcli connection show --active | grep -v NAME | cut -d " " -f 1`
+    FRND=`openssl rand -hex 5`
+    nmcli -g all | grep "^[a-z]" | grep connected | cut -d ":" -f 1 > /tmp/get_ip${FRND}
     # grab IP
-    for INTERFACE in `echo $ALLINTERFACE` ; do
-	#echo -n "$INTERFACE: "
-	ip -4 addr show $INTERFACE | grep -oP "(?<=inet ).*(?=/)"
+    cat /tmp/get_ip${FRND} | while read line; 
+	do 
+	#echo $line
+	ip -4 addr show "$line" | grep -oP "(?<=inet ).*(?=/)"
 	echo -n $IP
     done
+    rm -f /tmp/get_ip${FRND}
 }
 
 check_running() {
@@ -88,12 +91,12 @@ check_running() {
     if [ -z "$TEST" ]; then
 	echo -e "
  ${CONTAINER} Must be started"
-	info_cmd "podman start"
+	info_cmd "podman start ${CONTAINER}"
 	echo "
 OR
 "
 
-	info_cmd "$0 kvm"
+	info_cmd "$0 ${CONTAINER}"
 	exit 1
 	fi
 }
@@ -170,6 +173,41 @@ virtm_workload() {
     warning_xauth
     press_enter
     virt-manager.sh
+}
+
+TOINSTALL=""
+check_package() {
+	NAME=$*
+	for pkg in $NAME; 
+	do
+		TEST=`rpm -qa $pkg`
+		if [ ! -z "$TEST" ]; then
+			TOINSTALL="$TOINSTALL $pkg"
+		else
+			echo "$pkg already installed"
+		fi
+	done
+}
+
+pkg_install() {
+	transactional-update pkg in ${TOINSTALL}
+    	echo "- You need to reboot your system !"
+	press_enter
+	reboot
+}
+
+gdm_workload() {
+    NAME=$1
+    show_info "GDM"
+    xauth_needed
+    warning_xauth
+    press_enter
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} container runlabel install ${IMAGE}
+    systemctl daemon-reload
+    systemctl reload dbus
+    systemctl restart accounts-daemon
+    ${PODMAN} container runlabel run ${IMAGE}
 }
 
 cockpit_workload() {
@@ -265,6 +303,14 @@ if [ $# -eq 1 ]; then
 	    check_running libvirtd
 	    virtm_workload 
 	    ;;
+	gdm)
+	    check_package accountsservice systemd-experimental nss-systemd
+	    if [ ! -z "$TOINSTALL" ]; then
+		    echo "You need to install ${TOINSTALL}"
+	    fi
+	    check_container gdm
+	    gdm_workload gdm:latest
+	    ;;
 	yast)
 	    yast_ncurses_workload yast-mgmt-ncurses:latest
 	    ;;
@@ -286,6 +332,9 @@ if [ $# -eq 1 ]; then
 	    ;;
 	help)
 	    usage
+	    ;;
+	ip)
+	get_ip
 	    ;;
 	*)
 	    usage
