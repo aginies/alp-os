@@ -24,6 +24,7 @@ First arg should be the workload to start.
 * yast: Manage you host OS (console)
 * yastqt: Manage you host OS (GUI)
 * virtm: Manage Virtual Machine
+* gdm: Gnome Display Manager (local)
 * cockpit: Manage you host OS (Web)
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Monitoring System

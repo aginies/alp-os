@@ -72,15 +72,15 @@ Its mandatory to connect with ssh to the ALP OS using the -X (forwarding option)
 # grab exact IP address
 get_ip() {
     # grab all interfaces
-    FRND=`openssl rand -hex 5`
-    nmcli -g all | grep "^[a-z]" | grep connected | cut -d ":" -f 1 > /tmp/get_ip${FRND}
-    # grab IP
-    cat /tmp/get_ip${FRND} | while read line; 
-	do 
-	#echo $line
-	ip -4 addr show "$line" | grep -oP "(?<=inet ).*(?=/)"
-	echo -n $IP
-    done
+     FRND=`openssl rand -hex 5`
+     nmcli -g all | grep "^[a-z]" | grep connected | cut -d ":" -f 1 > /tmp/get_ip${FRND}
+     # grab IP
+     cat /tmp/get_ip${FRND} | while read line; 
+        do 
+        #echo $line
+        ip -4 addr show "$line" | grep -oP "(?<=inet ).*(?=/)"
+        echo -n $IP
+     done
     rm -f /tmp/get_ip${FRND}
 }
 
@@ -199,8 +199,6 @@ pkg_install() {
 gdm_workload() {
     NAME=$1
     show_info "GDM"
-    xauth_needed
-    warning_xauth
     press_enter
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
@@ -261,7 +259,7 @@ usage() {
 	https://documentation.suse.com/alp/all/
 
    	First arg should be the workload to start
-        $0 [kvm|yast|cockpit|grafana|firewalld|virtm|help]
+        $0 [kvm|yast|cockpit|grafana|firewalld|virtm|gdm|help]
 
 kvm	
 	Prepare system to deploy Virtual Machine
@@ -269,6 +267,9 @@ kvm
 		
 virtm
 	Manage Virtual Machine (virt-manager)
+
+gdm
+	GDM workload
 
 yast
 	Manage you host OS (console)
