@@ -177,11 +177,12 @@ virtm_workload() {
 
 TOINSTALL=""
 check_package() {
-	NAME=$*
+	NAME=$1
 	for pkg in $NAME; 
 	do
 		TEST=`rpm -qa $pkg`
-		if [ ! -z "$TEST" ]; then
+		echo $TEST
+		if [ -z "$TEST" ]; then
 			TOINSTALL="$TOINSTALL $pkg"
 		else
 			echo "$pkg already installed"
@@ -197,9 +198,23 @@ pkg_install() {
 }
 
 gdm_workload() {
-    NAME=$1
     show_info "GDM"
     press_enter
+    TESTSE=`getenforce`
+    if [ "$TESTSE" != "Permissive"  ]; then
+	    echo "Please switch system to Permissive mode and reboot"
+	    echo "/etc/selinux/config:"
+	    echo "SELINUX=permissive"
+	    exit 1
+    fi
+    check_package accountsservice 
+    check_package systemd-experimental
+
+    if [ ! -z "$TOINSTALL" ]; then
+	    echo "You need to install ${TOINSTALL}"
+	    exit 1
+    fi
+    NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
     systemctl daemon-reload
@@ -305,10 +320,6 @@ if [ $# -eq 1 ]; then
 	    virtm_workload 
 	    ;;
 	gdm)
-	    check_package accountsservice systemd-experimental nss-systemd
-	    if [ ! -z "$TOINSTALL" ]; then
-		    echo "You need to install ${TOINSTALL}"
-	    fi
 	    check_container gdm
 	    gdm_workload gdm:latest
 	    ;;
