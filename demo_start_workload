@@ -202,10 +202,16 @@ gdm_workload() {
     press_enter
     TESTSE=`getenforce`
     if [ "$TESTSE" != "Permissive"  ]; then
-	    echo "Please switch system to Permissive mode and reboot"
+	    echo "Switching system to Permissive mode and reboot"
 	    echo "/etc/selinux/config:"
 	    echo "SELINUX=permissive"
-	    exit 1
+	    echo "(A backup file will be created)"
+	    press_enter
+	    cp -vf /etc/sysconfig/selinux-policy /etc/sysconfig/selinux-policy.bck
+	    cat /etc/sysconfig/selinux-policy.bck | sed -e "s/SELINUX=.*/SELINUX=permissive//" > /etc/sysconfig/selinux-policy
+	    echo "Reboot the system?"
+	    press_enter
+	    reboot
     fi
     check_package accountsservice 
     check_package systemd-experimental
