@@ -16,7 +16,7 @@ in case of issue.
 
 First arg should be the workload to start.
 
-`demo_start_workload [kvm|yast|cockpit|grafana|firewalld|virtm|help]`
+`demo_start_workload [kvm|yast|cockpit|grafana|firewalld|virtm|gdm|help]`
 
 # Workloads available currently
 
@@ -29,23 +29,23 @@ First arg should be the workload to start.
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Monitoring System
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
-* firewalld
+* firewalld (WIP)
 
 # Install the wrapper script on ALP OS 
 
 ## Host OS
 
 You should use [SLE Micro](https://www.suse.com/products/micro/), [MicroOS](https://microos.opensuse.org/) or an [ALP OS](https://download.opensuse.org/repositories/SUSE:/ALP:/PUBLISH/images/) to use this script.
-SLE OS is not providing **nmcli** or **cockpit-bridge** by default.
+SLES OS is not providing **nmcli** or **cockpit-bridge** by default.
 
 ## With podman
 ```
-podman container runlabel install registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
+podman container runlabel install registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/demo:latest
 ```
 
 If you have a previous installation just remove the container in cache:
 ```
-podman rmi registry.opensuse.org/home/aginies/branches/opensuse/templates/images/tumbleweed/containers/suse/alp/workloads/demo:latest
+podman rmi registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads/demo:latest
 ```
 
 ## Just grab the script
