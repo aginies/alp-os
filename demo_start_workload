@@ -283,7 +283,6 @@ cockpit_workload() {
 }
 
 firewalld_workload() {
-    NAME=$1
     show_info "Firewalld workload"
     echo "FYI: use the /usr/local/bin/firewall-cmd wrapper to manage the firewalld instance afterward"
     press_enter
@@ -296,10 +295,10 @@ firewalld_workload() {
     check_reboot_system
     # firewalld was build with kiwi files, so path are different...
     WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_images/suse/alp/workloads
+    NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
-    #${PODMAN} container runlabel install ${IMAGE}
-    #${PODMAN}  run -d --rm --network host --privileged -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /etc/firewalld:/etc/firewalld --name firewalld ${IMAGE}
-    echo
+    ${PODMAN} container runlabel install ${IMAGE}
+    ${PODMAN}  run -d --rm --network host --privileged -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /etc/firewalld:/etc/firewalld --name firewalld ${IMAGE}
 }
 
 grafana_workload() {
