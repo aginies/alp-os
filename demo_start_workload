@@ -202,22 +202,24 @@ gdm_workload() {
     press_enter
     TESTSE=`getenforce`
     if [ "$TESTSE" != "Permissive"  ]; then
-	    echo "Switching system to Permissive mode and reboot"
+	    echo "- Switching system to Permissive mode and reboot"
 	    echo "/etc/selinux/config:"
 	    echo "SELINUX=permissive"
 	    echo "(A backup file will be created)"
 	    press_enter
 	    cp -vf /etc/sysconfig/selinux-policy /etc/sysconfig/selinux-policy.bck
 	    cat /etc/sysconfig/selinux-policy.bck | sed -e "s/SELINUX=.*/SELINUX=permissive//" > /etc/sysconfig/selinux-policy
-	    echo "Reboot the system?"
+	    echo "- Reboot the system?"
 	    press_enter
 	    reboot
     fi
-    check_package accountsservice 
+    check_package accountsservice
     check_package systemd-experimental
 
     if [ ! -z "$TOINSTALL" ]; then
-	    echo "You need to install ${TOINSTALL}"
+	    echo "- You need to install ${TOINSTALL}"
+	    press_enter
+	    pkg_install
 	    exit 1
     fi
     NAME=$1
@@ -276,7 +278,7 @@ EOF
 usage() {
     cat <<EOF
 
-	This is a DEMO script to TEST some ALP OS workload
+	This is a DEMO script to TEST some ALP OS workloads
 	https://documentation.suse.com/alp/all/
 
    	First arg should be the workload to start
