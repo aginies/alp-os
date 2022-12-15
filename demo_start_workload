@@ -164,6 +164,7 @@ pkg_install() {
 kvm_workload() {
     NAME=$1
     show_info "KVM container workload"
+    echo "FIY: KVM container provides a kvm-container-manage.sh script"
     # be sure that it fails in case of error (ie: detection of the kernel-default)
     set -eu
     IMAGE=${WORKLOADPATH}/${NAME}
@@ -269,6 +270,7 @@ firewalld_workload() {
 grafana_workload() {
     NAME=$1
     show_info "Grafana Web interface workload"
+    echo "FIY: grafana container provides a grafana-container-manage.sh script"
     press_enter
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
@@ -277,7 +279,7 @@ grafana_workload() {
     echo 
     DATA=$(get_ip)
     for list in $DATA; do
-	echo "	Go to https://$list:3000"
+	echo "	Go to http://$list:3000"
     done
 
 cat <<EOF
