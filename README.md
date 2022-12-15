@@ -95,7 +95,7 @@ grafana
 + grep grafana
 grafana
 
-	Go to https://10.0.1.38:3000
-	Go to https://192.168.10.1:3000
+	Go to http://10.0.1.38:3000
+	Go to http://192.168.10.1:3000
 	login with admin / admin
 ```
