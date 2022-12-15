@@ -325,6 +325,10 @@ firewalld
 	Firewall Management (firewalld WIP)
 	(may set restrictibe rules...)
 
+
+
+BUG: Please report any bug to https://github.com/aginies/alp-os/issues
+
 EOF
 	exit 0
 }
