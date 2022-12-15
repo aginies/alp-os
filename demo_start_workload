@@ -319,7 +319,7 @@ cockpit
 
 grafana
 	Monitoring System (Grafana Web Interface grafana)
-	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+	Go to http://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
 firewalld
 	Firewall Management (firewalld WIP)
