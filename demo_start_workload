@@ -7,6 +7,7 @@
 PODMAN=/usr/bin/podman
 # Official repo
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
+NEEDTOREBOOT=0
 
 # Improve console layout with some color
 txtund=$(tput sgr 0 1) # Underline
@@ -50,13 +51,11 @@ show_info() {
 
 # xauth is required for GUI app
 xauth_needed() {
-    TEST=`rpm -qa | grep xauth`
-    if [ -z "$TEST" ]; then
-	info_warn "WARNING! "
-    	echo -e "
-You need to install xauth and reboot:"
-	info_cmd "transactional-update pkg install xauth"
-	info_cmd "reboot"
+    check_package xauth
+    if [ ! -z "$TOINSTALL" ]; then
+	    echo "- You need to install ${TOINSTALL}"
+	    press_enter
+	    pkg_install
     fi
 }
 
@@ -67,6 +66,15 @@ Its mandatory to connect with ssh to the ALP OS using the -X (forwarding option)
 	info_cmd "ssh -X root@ALPOSIP"
 	echo "If not you will have a message similar to:"
 	info_warn "${DISPLAY} is not defined for graphical frontend"
+}
+
+
+check_reboot_system() {
+    if [ ${NEEDTOREBOOT} -eq "1" ]; then
+	    info_warn "Reboot the system?"
+	    press_enter
+	    reboot
+    fi
 }
 
 # grab exact IP address
@@ -129,6 +137,28 @@ check_container() {
 	fi
 }
 
+TOINSTALL=""
+check_package() {
+	NAME=$1
+	for pkg in $NAME; 
+	do
+		TEST=`rpm -qa $pkg`
+		echo $TEST
+		if [ -z "$TEST" ]; then
+			TOINSTALL="$TOINSTALL $pkg"
+		else
+			echo "$pkg already installed"
+		fi
+	done
+}
+
+pkg_install() {
+	show_info "DEVEL mode: in devel mode you probably need to enable the ALP Build Repository:"
+	info_cmd "zypper mr -e 2"
+	transactional-update pkg in ${TOINSTALL}
+	NEEDTOREBOOT=1
+}
+
 ### WORKLOADS
 
 kvm_workload() {
@@ -158,11 +188,12 @@ yast_ncurses_workload() {
 }
 
 yast_qt_workload() {
-    NAME=$1
     show_info "Yast QT"
     xauth_needed
+    check_reboot_system
     warning_xauth
     press_enter
+    NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel run ${IMAGE}
 }
@@ -170,36 +201,23 @@ yast_qt_workload() {
 virtm_workload() {
     show_info "Virt-manager"
     xauth_needed
+    check_reboot_system
     warning_xauth
     press_enter
     virt-manager.sh
 }
 
-TOINSTALL=""
-check_package() {
-	NAME=$1
-	for pkg in $NAME; 
-	do
-		TEST=`rpm -qa $pkg`
-		echo $TEST
-		if [ -z "$TEST" ]; then
-			TOINSTALL="$TOINSTALL $pkg"
-		else
-			echo "$pkg already installed"
-		fi
-	done
-}
-
-pkg_install() {
-	transactional-update pkg in ${TOINSTALL}
-    	echo "- You need to reboot your system !"
-	press_enter
-	reboot
-}
-
 gdm_workload() {
     show_info "GDM"
     press_enter
+    check_package accountsservice
+    check_package systemd-experimental
+
+    if [ ! -z "$TOINSTALL" ]; then
+	    echo "- You need to install ${TOINSTALL}"
+	    press_enter
+	    pkg_install
+    fi
     TESTSE=`getenforce`
     if [ "$TESTSE" != "Permissive"  ]; then
 	    echo "- Switching system to Permissive mode and reboot"
@@ -209,19 +227,12 @@ gdm_workload() {
 	    press_enter
 	    cp -vf /etc/sysconfig/selinux-policy /etc/sysconfig/selinux-policy.bck
 	    cat /etc/sysconfig/selinux-policy.bck | sed -e "s/SELINUX=.*/SELINUX=permissive/" > /etc/sysconfig/selinux-policy
-	    echo "- Reboot the system?"
-	    press_enter
+	    NEEDTOREBOOT=1
 	    reboot
+    else
+	   echo "- SELINUX already set to Permissive mode"
     fi
-    check_package accountsservice
-    check_package systemd-experimental
-
-    if [ ! -z "$TOINSTALL" ]; then
-	    echo "- You need to install ${TOINSTALL}"
-	    press_enter
-	    pkg_install
-	    exit 1
-    fi
+    check_reboot_system
     NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
