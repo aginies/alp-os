@@ -8,6 +8,8 @@ PODMAN=/usr/bin/podman
 # Official repo
 WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/suse/alp/workloads
 NEEDTOREBOOT=0
+TOINSTALL=""
+TOREMOVE=""
 
 # Improve console layout with some color
 txtund=$(tput sgr 0 1) # Underline
@@ -51,7 +53,7 @@ show_info() {
 
 # xauth is required for GUI app
 xauth_needed() {
-    check_package xauth
+    check_package install xauth
     if [ ! -z "$TOINSTALL" ]; then
 	    echo "- You need to install ${TOINSTALL}"
 	    press_enter
@@ -68,7 +70,7 @@ Its mandatory to connect with ssh to the ALP OS using the -X (forwarding option)
 	info_warn "${DISPLAY} is not defined for graphical frontend"
 }
 
-
+# Check if we need to reboot the system to be ready
 check_reboot_system() {
     if [ ${NEEDTOREBOOT} -eq "1" ]; then
 	    info_warn "Reboot the system?"
@@ -92,6 +94,7 @@ get_ip() {
     rm -f /tmp/get_ip${FRND}
 }
 
+# check if a container is already running
 check_running() {
     # first ARG is the container name to check
     CONTAINER=$1
@@ -109,6 +112,7 @@ OR
 	fi
 }
 
+# Check if a container is already started
 check_container() {
 	if [ -z "$1" ]; then info_warn "Need a container name to check!"; exit 1; fi
 	# first ARG is the container name to check
@@ -137,21 +141,34 @@ check_container() {
 	fi
 }
 
-TOINSTALL=""
+# Check package on the ALP OS system
 check_package() {
-	NAME=$1
+	# TODO : install / remove
+	# NAME : name of the package to deal with 
+	TODO=$1
+	NAME=$2
 	for pkg in $NAME; 
 	do
 		TEST=`rpm -qa $pkg`
 		echo $TEST
-		if [ -z "$TEST" ]; then
-			TOINSTALL="$TOINSTALL $pkg"
+		if [ ${TODO} == "install" ]; then
+			if [ -z "$TEST" ]; then
+				TOINSTALL="$TOINSTALL $pkg"
+			else
+				echo "$pkg already installed"
+			fi
 		else
-			echo "$pkg already installed"
+			# this is remove :)
+			if [ ! -z "$TEST" ]; then
+				TOREMOVE="$TOREMOVE $pkg"
+			else
+				echo "$pkg is not installed on the system"
+			fi
 		fi
 	done
 }
 
+# Install a package with transactional-update
 pkg_install() {
 	show_info "DEVEL mode: in devel mode you probably need to enable the ALP Build Repository:"
 	info_cmd "zypper mr -e 2"
@@ -159,6 +176,13 @@ pkg_install() {
 	NEEDTOREBOOT=1
 }
 
+# Remove a package with transactional-update
+pkg_remove() {
+	transactional-update pkg rm ${TOREMOVE}
+	NEEDTOREBOOT=1
+}
+
+##############
 ### WORKLOADS
 
 kvm_workload() {
@@ -178,7 +202,6 @@ kvm_workload() {
     press_enter
     virt-install-demo.sh
 }
-
 
 yast_ncurses_workload() {
     NAME=$1
@@ -201,6 +224,7 @@ yast_qt_workload() {
 
 virtm_workload() {
     show_info "Virt-manager"
+    echo "FYI: Use virt-manager.sh to launch it afterward"
     xauth_needed
     check_reboot_system
     warning_xauth
@@ -211,8 +235,8 @@ virtm_workload() {
 gdm_workload() {
     show_info "GDM"
     press_enter
-    check_package accountsservice
-    check_package systemd-experimental
+    check_package install accountsservice
+    check_package install systemd-experimental
 
     if [ ! -z "$TOINSTALL" ]; then
 	    echo "- You need to install ${TOINSTALL}"
@@ -261,10 +285,21 @@ cockpit_workload() {
 firewalld_workload() {
     NAME=$1
     show_info "Firewalld workload"
+    echo "FYI: use the /usr/local/bin/firewall-cmd wrapper to manage the firewalld instance afterward"
     press_enter
+    check_package remove firewalld
+    if [ ! -z "$TOREMOVE" ]; then
+	    echo "- You need to remove ${TOREMOVE}"
+	    press_enter
+	    pkg_remove
+    fi
+    check_reboot_system
+    # firewalld was build with kiwi files, so path are different...
+    WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/tumbleweed_images/suse/alp/workloads
     IMAGE=${WORKLOADPATH}/${NAME}
-    ${PODMAN} create --name firewalld --privileged --init --cgroupns host --network host ${IMAGE}
-    ${PODMAN} start firewalld
+    #${PODMAN} container runlabel install ${IMAGE}
+    #${PODMAN}  run -d --rm --network host --privileged -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /etc/firewalld:/etc/firewalld --name firewalld ${IMAGE}
+    echo
 }
 
 grafana_workload() {
@@ -322,7 +357,7 @@ grafana
 	Go to http://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 
 firewalld
-	Firewall Management (firewalld WIP)
+	Firewall Management
 	(may set restrictibe rules...)
 
 
