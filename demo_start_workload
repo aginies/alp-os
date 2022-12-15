@@ -208,7 +208,7 @@ gdm_workload() {
 	    echo "(A backup file will be created)"
 	    press_enter
 	    cp -vf /etc/sysconfig/selinux-policy /etc/sysconfig/selinux-policy.bck
-	    cat /etc/sysconfig/selinux-policy.bck | sed -e "s/SELINUX=.*/SELINUX=permissive//" > /etc/sysconfig/selinux-policy
+	    cat /etc/sysconfig/selinux-policy.bck | sed -e "s/SELINUX=.*/SELINUX=permissive/" > /etc/sysconfig/selinux-policy
 	    echo "- Reboot the system?"
 	    press_enter
 	    reboot
