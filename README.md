@@ -29,7 +29,7 @@ First arg should be the workload to start.
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Monitoring System
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
-* firewalld (WIP)
+* firewalld: firewall management and daemon
 
 # Install the wrapper script on ALP OS 
 
