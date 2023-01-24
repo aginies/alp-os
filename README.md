@@ -30,6 +30,8 @@ First arg should be the workload to start.
 * grafana: Monitoring System
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 * firewalld: firewall management and daemon
+* neuvector: Container Security
+   * https://HOSTNAME_OR_IP_OF_ALP_HOST:8443
 
 # Install the wrapper script on ALP OS 
 
