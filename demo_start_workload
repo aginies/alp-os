@@ -94,6 +94,20 @@ get_ip() {
     rm -f /tmp/get_ip${FRND}
 }
 
+# how to connect to access the service
+help_connect_info() {
+# first param: connector, http, https
+# second param is the port number
+    connector=$1
+    PORT=$2
+    DATA=$(get_ip)
+    echo
+    for list in ${DATA}; do
+	echo "	Go to ${connector}://${list}:${PORT}"
+    done
+
+}
+
 # check if a container is already running
 check_running() {
     # first ARG is the container name to check
@@ -106,7 +120,6 @@ check_running() {
 	echo "
 OR
 "
-
 	info_cmd "$0 ${CONTAINER}"
 	exit 1
 	fi
@@ -275,11 +288,7 @@ cockpit_workload() {
     #IMAGE=localhost/co:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
-    DATA=$(get_ip)
-    echo
-    for list in $DATA; do
-	echo "	Go to https://$list:9090"
-    done
+    help_connect_info("https", "9090")
 }
 
 firewalld_workload() {
@@ -310,11 +319,7 @@ grafana_workload() {
     ${PODMAN} container runlabel install ${IMAGE}
     grafana-container-manage.sh create
     grafana-container-manage.sh start
-    echo 
-    DATA=$(get_ip)
-    for list in $DATA; do
-	echo "	Go to http://$list:3000"
-    done
+    help_connect_info("http", "3000")
 
 cat <<EOF
 	login with admin / admin
@@ -325,7 +330,6 @@ EOF
 neuvector_workload() {
     show_info "NeuVector workload"
     echo "FYI: Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:8443"
-    echo "Default credentials: admin / admin"
     press_enter
     # neuvector was build with kiwi files, so path are different...
     WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/bci_containerfiles/suse/alp/workloads
@@ -334,6 +338,11 @@ neuvector_workload() {
     ${PODMAN} pull ${IMAGE}
     ${PODMAN} container runlabel install ${IMAGE}
     systemctl start neuvector 
+    help_connect_info("https", "8443")
+cat <<EOF
+   Default credentials: admin / admin
+
+EOF
 }
 
 
