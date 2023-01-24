@@ -28,7 +28,7 @@ First arg should be the workload to start.
 * cockpit: Manage you host OS (Web)
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
 * grafana: Monitoring System
-   * https://HOSTNAME_OR_IP_OF_ALP_HOST:3000
+   * http://HOSTNAME_OR_IP_OF_ALP_HOST:3000
 * firewalld: firewall management and daemon
 * neuvector: Container Security
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:8443
