@@ -189,6 +189,27 @@ pkg_install() {
 	NEEDTOREBOOT=1
 }
 
+# selinux mode: permissive or enforcing
+set_selinux() {
+    EXPECTEDMODE=$1
+    TESTSE=`getenforce | tr '[:upper:]' '[:lower:]'`
+    echo "Selinux setting: ${TESTSE}"
+    CONFFILE="/etc/selinux/config"
+    if [ "$TESTSE" != "${EXPECTEDMODE}"  ]; then
+	    echo "- Switching system to ${EXPECTEDMODE} mode and reboot"
+	    echo "${CONFFILE}:"
+	    echo "SELINUX=${EXPECTEDMODE}"
+	    echo "(A backup file will be created)"
+	    #press_enter
+	    cp -vf ${CONFFILE} ${CONFFILE}.bck
+	    cat ${CONFFILE}.bck | sed -e "s/SELINUX=.*/SELINUX=${EXPECTEDMODE}/" > ${CONFFILE}
+	    setenforce ${EXPECTEDMODE}
+	    #NEEDTOREBOOT=1
+    else
+	   echo "- SELINUX already set to ${EXPECTEDMODE} mode"
+    fi
+}
+
 # Remove a package with transactional-update
 pkg_remove() {
 	transactional-update pkg rm ${TOREMOVE}
@@ -256,21 +277,8 @@ gdm_workload() {
 	    press_enter
 	    pkg_install
     fi
-    TESTSE=`getenforce`
-    if [ "$TESTSE" != "Permissive"  ]; then
-	    echo "- Switching system to Permissive mode and reboot"
-	    echo "/etc/selinux/config:"
-	    echo "SELINUX=permissive"
-	    echo "(A backup file will be created)"
-	    press_enter
-	    cp -vf /etc/sysconfig/selinux-policy /etc/sysconfig/selinux-policy.bck
-	    cat /etc/sysconfig/selinux-policy.bck | sed -e "s/SELINUX=.*/SELINUX=permissive/" > /etc/sysconfig/selinux-policy
-	    NEEDTOREBOOT=1
-	    reboot
-    else
-	   echo "- SELINUX already set to Permissive mode"
-    fi
-    check_reboot_system
+    set_selinux permissive
+    #check_reboot_system
     NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
@@ -331,6 +339,8 @@ neuvector_workload() {
     show_info "NeuVector workload"
     press_enter
     # neuvector was build with kiwi files, so path are different...
+    set_selinux permissive
+    #check_reboot_system
     WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/bci_containerfiles/suse/alp/workloads
     NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
