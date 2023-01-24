@@ -288,7 +288,7 @@ cockpit_workload() {
     #IMAGE=localhost/co:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
-    help_connect_info("https", "9090")
+    help_connect_infoi https 9090
 }
 
 firewalld_workload() {
@@ -319,7 +319,7 @@ grafana_workload() {
     ${PODMAN} container runlabel install ${IMAGE}
     grafana-container-manage.sh create
     grafana-container-manage.sh start
-    help_connect_info("http", "3000")
+    help_connect_info http 3000
 
 cat <<EOF
 	login with admin / admin
@@ -338,7 +338,7 @@ neuvector_workload() {
     ${PODMAN} pull ${IMAGE}
     ${PODMAN} container runlabel install ${IMAGE}
     systemctl start neuvector 
-    help_connect_info("https", "8443")
+    help_connect_info https 8443
 cat <<EOF
    Default credentials: admin / admin
 
