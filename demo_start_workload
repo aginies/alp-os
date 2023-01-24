@@ -329,7 +329,6 @@ EOF
 
 neuvector_workload() {
     show_info "NeuVector workload"
-    echo "FYI: Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:8443"
     press_enter
     # neuvector was build with kiwi files, so path are different...
     WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/bci_containerfiles/suse/alp/workloads
