@@ -322,6 +322,20 @@ cat <<EOF
 EOF
 }
 
+neuvector_workload() {
+    show_info "NeuVector workload"
+    echo "FYI: Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:8443"
+    press_enter
+    # neuvector was build with kiwi files, so path are different...
+    WORKLOADPATH=registry.opensuse.org/suse/alp/workloads/bci_containerfiles/suse/alp/workloads
+    NAME=$1
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} pull ${IMAGE}
+    ${PODMAN} container runlabel install ${IMAGE}
+    systemctl start neuvector 
+}
+
+
 usage() {
     cat <<EOF
 
@@ -359,6 +373,9 @@ firewalld
 	Firewall Management
 	(may set restrictibe rules...)
 
+neuvector
+	Container Security
+	Go to https://HOSTNAME_OR_IP_OF_ALP_HOST:8443
 
 
 BUG: Please report any bug to https://github.com/aginies/alp-os/issues
@@ -400,6 +417,9 @@ if [ $# -eq 1 ]; then
 	firewalld)
 	    check_container firewalld
 	    firewalld_workload firewalld:latest
+	    ;;
+	neuvector)
+	    neuvector_workload neuvector-demo:latest
 	    ;;
 	help)
 	    usage
