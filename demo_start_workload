@@ -258,12 +258,12 @@ yast_qt_workload() {
 
 virtm_workload() {
     show_info "Virt-manager"
-    echo "FYI: Use virt-manager.sh to launch it afterward"
+    echo "FYI: Use virt-manager to launch it afterward"
     xauth_needed
     check_reboot_system
     warning_xauth
     press_enter
-    virt-manager.sh
+    virt-manager
 }
 
 gdm_workload() {
@@ -278,7 +278,7 @@ gdm_workload() {
 	    pkg_install
     fi
     set_selinux permissive
-    #check_reboot_system
+    check_reboot_system
     NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
