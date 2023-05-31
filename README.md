@@ -16,7 +16,7 @@ in case of issue.
 
 First arg should be the workload to start.
 
-`start_workload [kvm|yast|cockpit|grafana|firewalld|gdm|ansible|help]`
+`start_workload /start_workload [kvm|yast|cockpit|grafana|firewalld|gdm|ansible|kea|bind|help]`
 
 # Workloads available currently
 
