@@ -1,8 +1,8 @@
 
 # Goal
 
-This is a **WRAPPER** script to test some **[ALP OS](https://github.com/aginies/alp-os#official-documentation)** workload.
-**ALP** is a SUSE lightweight operating system. Instead of applications 
+**WRAPPER** script to test some **[ALP OS](https://github.com/aginies/alp-os#official-documentation)** workload.
+**ALP** is a SUSE lightweight Operating System. Instead of applications 
 distributed in traditional software packages, it runs 
 containerized and virtualized workloads.
 
@@ -16,14 +16,16 @@ in case of issue.
 
 First arg should be the workload to start.
 
-`demo_start_workload [kvm|yast|cockpit|grafana|firewalld|virtm|gdm|help]`
+`start_workload [kvm|yast|cockpit|grafana|firewalld|gdm|ansible|help]`
 
 # Workloads available currently
 
+* ansible: Provides the ansible toolstack
 * kvm: Prepare system to deploy Virtual Machine
+* kea: Kea DHCP4/DHCP6 server
+* bind: ISC Bind9 DNS Server
 * yast: Manage you host OS (console)
 * yastqt: Manage you host OS (GUI)
-* virtm: Manage Virtual Machine
 * gdm: Gnome Display Manager (local)
 * cockpit: Manage you host OS (Web)
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
@@ -53,9 +55,9 @@ podman rmi registry.opensuse.org/suse/alp/workloads/tumbleweed_containerfiles/su
 ## Just grab the script
 
 ```bash
-curl -L -o /usr/local/bin/demo_start_workload https://raw.githubusercontent.com/aginies/alp-os/main/demo_start_workload
-chmod 755 /usr/local/bin/demo_start_workload
-demo_start_workload
+curl -L -o /usr/local/bin/start_workload https://raw.githubusercontent.com/aginies/alp-os/main/start_workload
+chmod 755 /usr/local/bin/start_workload
+start_workload
 ```
 
 # Official path to workloads
@@ -69,7 +71,7 @@ https://documentation.suse.com/alp/all/
 # Example
 
 ```bash
- # demo_start_workload grafana
+ # start_workload grafana
 
 ################################
  Grafana Web interface workload

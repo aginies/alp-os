@@ -75,7 +75,7 @@ check_reboot_system() {
     if [ ${NEEDTOREBOOT} -eq "1" ]; then
 	    info_warn "Reboot the system?"
 	    press_enter
-	    #reboot
+	    reboot
     fi
 }
 
@@ -278,6 +278,21 @@ gdm_workload() {
     ${PODMAN} container runlabel run ${IMAGE}
 }
 
+ansible_workload() {
+    show_info "Ansible toolstack workload"
+    press_enter
+    check_package install python3-lxml python3-rpm
+
+    if [ ! -z "$TOINSTALL" ]; then
+            echo "- You need to install ${TOINSTALL}"
+            press_enter
+            pkg_install
+    fi
+    NAME=$1
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} container runlabel install ${IMAGE}
+}
+
 cockpit_workload() {
     show_info "Cockpit Web Management workload"
     press_enter
@@ -314,6 +329,30 @@ firewalld_workload() {
     IMAGE=${WORKLOADPATH}/${NAME}
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN}  run -d --rm --network host --privileged -v /run/dbus/system_bus_socket:/run/dbus/system_bus_socket -v /etc/firewalld:/etc/firewalld --name firewalld ${IMAGE}
+}
+
+bind_workload() {
+    show_info "ISC Bind9 DNS Server"
+    echo "Default configs into /etc/ and /var/lib/named"
+    echo "A rndc wrapper into /usr/local/sbin/"
+    press_enter
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} container runlabel install ${IMAGE}
+    systemctl daemon-reload
+    systemctl start named.service
+}
+
+kea_workload() {
+    NAME=$1
+    show_info "Kea DHCP4/DHCP6 server"
+    echo "Default configs into /etc/kea/"
+    echo "A keactrl wrapper into /usr/local/bin/"
+    echo "Systemd service files for the dhcp4 and dhcp6 containers into /etc/systemd/system/"
+    press_enter
+    IMAGE=${WORKLOADPATH}/${NAME}
+    ${PODMAN} container runlabel install ${IMAGE}
+    systemctl start kea-dhcp4.service
+    systemctl start kea-dhcp6.service
 }
 
 grafana_workload() {
@@ -356,11 +395,16 @@ EOF
 usage() {
     cat <<EOF
 
-	This is a DEMO script to TEST some ALP OS workloads
+	Script to test some ALP OS workloads
 	https://documentation.suse.com/alp/all/
 
    	First arg should be the workload to start
-        $0 [kvm|yast|cockpit|grafana|firewalld|gdm|help]
+        $0 [kvm|yast|cockpit|grafana|firewalld|gdm|ansible|kea|bind|help]
+
+ansible Provides the ansible toolstack
+
+kea
+	Kea DHCP4/DHCP6 server
 
 kvm	
 	Prepare system to deploy Virtual Machine
@@ -371,6 +415,9 @@ gdm
 
 yast
 	Manage you host OS (console)
+
+bind
+	ISC Bind9 DNS Server
 
 yastqt
 	Manage your host OS (GUI)
@@ -401,6 +448,14 @@ EOF
 
 if [ $# -eq 1 ]; then
     case $1 in
+	ansible)
+	    check_container ansible
+	    ansible_workload ansible:latest
+	    ;;
+	kea)
+	    check_container kea
+	    kea_workload kea:latest
+	    ;;
 	kvm)
 	    check_container libvirtd
 	    kvm_workload kvm:latest
@@ -408,6 +463,10 @@ if [ $# -eq 1 ]; then
 	gdm)
 	    check_container gdm
 	    gdm_workload gdm:latest
+	    ;;
+	bind)
+	    check_container bind
+	    bind_workload bind:latest
 	    ;;
 	yast)
 	    yast_ncurses_workload yast-mgmt-ncurses:latest
