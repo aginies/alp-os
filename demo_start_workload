@@ -75,7 +75,7 @@ check_reboot_system() {
     if [ ${NEEDTOREBOOT} -eq "1" ]; then
 	    info_warn "Reboot the system?"
 	    press_enter
-	    reboot
+	    #reboot
     fi
 }
 
@@ -256,16 +256,6 @@ yast_qt_workload() {
     ${PODMAN} container runlabel run ${IMAGE}
 }
 
-virtm_workload() {
-    show_info "Virt-manager"
-    echo "FYI: Use virt-manager to launch it afterward"
-    xauth_needed
-    check_reboot_system
-    warning_xauth
-    press_enter
-    virt-manager
-}
-
 gdm_workload() {
     show_info "GDM"
     press_enter
@@ -289,14 +279,22 @@ gdm_workload() {
 }
 
 cockpit_workload() {
-    NAME=$1
     show_info "Cockpit Web Management workload"
     press_enter
+    check_package install cockpit-bridge
+
+    if [ ! -z "$TOINSTALL" ]; then
+	    echo "- You need to install ${TOINSTALL}"
+	    press_enter
+	    pkg_install
+    fi
+
+    NAME=$1
     IMAGE=${WORKLOADPATH}/${NAME}
     #IMAGE=localhost/co:latest
     ${PODMAN} container runlabel install ${IMAGE}
     ${PODMAN} container runlabel --name cockpit-ws run ${IMAGE}
-    help_connect_infoi https 9090
+    help_connect_info https 9090
 }
 
 firewalld_workload() {
@@ -362,15 +360,12 @@ usage() {
 	https://documentation.suse.com/alp/all/
 
    	First arg should be the workload to start
-        $0 [kvm|yast|cockpit|grafana|firewalld|virtm|gdm|help]
+        $0 [kvm|yast|cockpit|grafana|firewalld|gdm|help]
 
 kvm	
 	Prepare system to deploy Virtual Machine
 	(Kvm container workload libvirtd)
 		
-virtm
-	Manage Virtual Machine (virt-manager)
-
 gdm
 	GDM workload
 
@@ -409,10 +404,6 @@ if [ $# -eq 1 ]; then
 	kvm)
 	    check_container libvirtd
 	    kvm_workload kvm:latest
-	    ;;
-	virtm)
-	    check_running libvirtd
-	    virtm_workload 
 	    ;;
 	gdm)
 	    check_container gdm
