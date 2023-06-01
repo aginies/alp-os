@@ -16,23 +16,24 @@ in case of issue.
 
 First arg should be the workload to start.
 
-`start_workload /start_workload [kvm|yast|cockpit|grafana|firewalld|gdm|ansible|kea|bind|help]`
+`start_workload /start_workload [kvm|yast|cockpit|grafana|firewalld|gdm|ansible|kea|bind|ww|help]`
 
 # Workloads available currently
 
-* ansible: Provides the ansible toolstack
-* kvm: Prepare system to deploy Virtual Machine
-* kea: Kea DHCP4/DHCP6 server
-* bind: ISC Bind9 DNS Server
-* yast: Manage you host OS (console)
-* yastqt: Manage you host OS (GUI)
-* gdm: Gnome Display Manager (local)
-* cockpit: Manage you host OS (Web)
+* **ansible**: Provides the ansible toolstack
+* **kvm**: Prepare system to deploy Virtual Machine
+* **kea**: Kea DHCP4/DHCP6 server
+* **bind**: ISC Bind9 DNS Server
+* **yast**: Manage you host OS (console)
+* **yastqt**: Manage you host OS (GUI)
+* **ww**: provides warewulf4
+* **gdm**: Gnome Display Manager (local)
+* **cockpit**: Manage you host OS (Web)
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:9090
-* grafana: Monitoring System
+* **grafana**: Monitoring System
    * http://HOSTNAME_OR_IP_OF_ALP_HOST:3000
-* firewalld: firewall management and daemon
-* neuvector: Container Security
+* **firewalld**: firewall management and daemon
+* **neuvector**: Container Security
    * https://HOSTNAME_OR_IP_OF_ALP_HOST:8443
 
 # Install the wrapper script on ALP OS 
