@@ -1,4 +1,10 @@
 -------------------------------------------------------------------
+Thu Jun  1 08:41:18 UTC 2023 - Antoine Ginies <aginies@suse.com>
+
+- check podman command is correctly executed
+- add warewulf4 container support (WIP)
+
+-------------------------------------------------------------------
 Wed May 31 13:41:06 UTC 2023 - Antoine Ginies <aginies@suse.com>
 
 - add bind, kea, ansible support
