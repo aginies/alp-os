@@ -1,0 +1,46 @@
+-------------------------------------------------------------------
+Wed May 31 13:41:06 UTC 2023 - Antoine Ginies <aginies@suse.com>
+
+- add bind, kea, ansible support
+- remove virt-manager support (no more available)
+- update README.md
+- small typo fixes
+- rename script to start_workload
+
+-------------------------------------------------------------------
+Wed Mar 29 15:04:27 UTC 2023 - Antoine Ginies <aginies@suse.com>
+
+- fix to call correct virt-manager script
+
+-------------------------------------------------------------------
+Tue Jan 24 16:03:23 UTC 2023 - Antoine Ginies <aginies@suse.com>
+
+- add neuvector container support (fcrozat)
+- improve some part of the code (url to connect, selinux)
+
+-------------------------------------------------------------------
+Thu Dec 15 09:51:56 UTC 2022 - Antoine Ginies <aginies@suse.com>
+
+- add an url to report bug
+- grafana port 3000 is only http
+- add some more info about management scripts
+- improve reboot part
+- install needed packages for GDM/Virt-manager/yastQT workloads
+- GDM: automatically switch to permissive mode
+- several bug fixes
+- force overwrite of demo script on the Host system
+- add support for package removal
+- enable firewalld
+
+-------------------------------------------------------------------
+Wed Dec 14 11:12:31 UTC 2022 - Antoine Ginies <aginies@suse.com>
+
+- few fixes in get_ip
+- GDM container support
+
+-------------------------------------------------------------------
+Thu Nov  3 08:50:37 UTC 2022 - Antoine Ginies <aginies@suse.com>
+
+- restore a working release
+
+

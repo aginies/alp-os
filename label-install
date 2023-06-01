@@ -1,0 +1,23 @@
+#!/bin/sh -eu
+# This is the install script for demo when run in a privileged
+# container.
+
+DATE=`date +20%y%m%d-%Hh%mm%S`
+cd /
+
+echo "LABEL INSTALL"
+# ensure all scripts will be present on the host 
+copy_to_usr_local_bin() {
+SCRIPT=$1
+if [ ! -e /host/usr/local/bin/${SCRIPT} ]; then
+        echo "copy /container/${SCRIPT} in /host/usr/local/bin/"
+        cp -av /container/${SCRIPT} /host/usr/local/bin/
+else
+        echo "/host/usr/local/bin/${SCRIPT} already exist"
+	echo "Backuping file to /host/usr/local/bin/${SCRIPT}_${DATE}.bck"
+	cp -vf /host/usr/local/bin/${SCRIPT} /host/usr/local/bin/${SCRIPT}_${DATE}.bck
+        cp -afv /container/${SCRIPT} /host/usr/local/bin/
+fi
+}
+
+copy_to_usr_local_bin start_workload
