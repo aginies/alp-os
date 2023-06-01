@@ -517,7 +517,7 @@ if [ $# -eq 1 ]; then
 	    ;;
 	ww)
 	    check_container warewulf
-	    warewulf_workload warewlf:latest
+	    warewulf_workload warewulf:latest
 	    ;;
 	help)
 	    usage
